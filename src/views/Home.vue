@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Phamachain"/>
+    <HelloWorld msg="Welcome to Phamachain1.0"/>
   </div>
 </template>
 

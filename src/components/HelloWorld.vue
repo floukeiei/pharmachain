@@ -1,40 +1,90 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <p>
-      For guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+<h1>{{ info != null ? info.data:'' }}</h1>
+
+ <!-- <b-button size="lg" variant="success" v-on:click="test()">
+            Test
+          </b-button>
+          {{user.uid}} -->
+
   </div>
 </template>
 
 <script>
+// import axios from 'axios'
+import firebase from 'firebase'
+
 export default {
   name: 'HelloWorld',
   props: {
     msg: String
+  },
+  data () {
+    return {
+      info: null,
+      user: this.$store.getters['user/user'],
+      contacts: null
+    }
+  },
+  created () {
+    var database = firebase.database()
+    var contactRef = database.ref('/users/' + this.user.uid)
+    contactRef.on('value', (snapshot) => {
+      if (snapshot.numChildren() === 0) {
+        let data = {
+          role: 'doctor',
+          address: '0xD34174b35F99f184b62e269be6a1a5d66f5bC279'
+        }
+        contactRef.push(data)
+      } else {
+        // console.log(this.$store.state.contacts)
+        for (let key in snapshot.val()) {
+          this.$store.state.contacts.address = snapshot.val()[key].address
+          this.$store.state.contacts.role = snapshot.val()[key].role
+          // console.log(this.$store.state.contacts.privateKey)
+          console.log(this.$store.state.contacts.role)
+        }
+      }
+    })
+  },
+  methods: {
+    test () {
+      var arry = []
+      // var json = new Map([
+      //   [ '0xD34174b35F99f184b62e269be6a1a5d66f5bC279',
+      //     '0xE431389a93d48c53DF2354542c801e10d27c59E9',
+      //     'โจ',
+      //     'ฟลุ๊ค'],
+      //   [ '0xD34174b35F99f184b62e269be6a1a5d66f5bC279',
+      //     '0xE431389a93d48c53DF2354542c801e10d27c59E9',
+      //     'โจ',
+      //     'ฟลุ๊ค' ]
+      // ])
+      arry.push([
+        [ '0xD34174b35F99f184b62e269be6a1a5d66f5bC279',
+          '0xE431389a93d48c53DF2354542c801e10d27c59E9',
+          'โจ',
+          'ฟลุ๊ค'],
+        [ '0xD34174b35F99f184b62e269be6a1a5d66f5bC279',
+          '0xE431389a93d48c53DF2354542c801e10d27c59E9',
+          'โจ',
+          'ฟลุ๊ค']
+      ])
+      console.log(arry)
+      // console.log(this.$store.state.contacts.key)
+      // console.log(this.$store.state.contacts.get(0).privateKey)
+      // $.each(this.$store.state.contacts, function (key, value) {
+      //   console.log(value.privateKey)
+      // })
+
+      // this.$store.state.contacts.fs
+      // axios
+      //   .get(process.env.VUE_APP_AWS)
+      //   .then(response => { console.log(response.data) })
+
+      // console.log(contactRef.child)
+    }
   }
 }
 </script>
